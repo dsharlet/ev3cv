@@ -51,13 +51,13 @@ public:
   ///@{
   bool connected() const { return m_.connected(); }
   std::string port_name() const { return m_.port_name(); }
-  ev3dev::device_type type() const { return m_.type(); }
+  std::string driver_name() const { return m_.driver_name(); }
   ///@}
 
   /** The state of the servo. */
   ///@{
   void run();
-  bool running() const { return m_.running(); }
+  bool running() const { return m_.state().count("running"); }
   ///@}
 
   /** Stop the servo.
@@ -72,12 +72,12 @@ public:
 
   /** Get or set the position setpoint. */
   ///@{
-  int position_setpoint() const;
-  void set_position_setpoint(int sp);
+  int position_sp() const;
+  void set_position_sp(int sp);
   ///@}
   /** Set the position setpoint to a function callback f(x, t, dt).
    * Note that f will be called from another thread. */
-  void set_position_setpoint(std::function<int(int, int, int)> sp_fn);
+  void set_position_sp(std::function<int(int, int, int)> sp_fn);
 
   /** Get or set the max duty cycle */
   ///@{

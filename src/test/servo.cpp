@@ -49,9 +49,8 @@ cl::arg<vector3i> K(
   ev3cv_group);
 
 cl::group ev3dev_group("ev3dev::motor settings");
-cl::arg<std::string> regulation_mode(
-  "off",
-  cl::name("regulation-mode"),
+cl::boolean speed_regulation(
+  cl::name("speed-regulation"),
   ev3dev_group);
 cl::arg<std::string> stop_mode(
   "hold",
@@ -65,13 +64,13 @@ cl::arg<int> ramp_down(
   0,
   cl::name("ramp-down"),
   ev3dev_group);
-cl::arg<int> pulses_per_second_setpoint(
+cl::arg<int> speed_sp(
   700,
-  cl::name("pulses-per-second-setpoint"),
+  cl::name("speed-sp"),
   ev3dev_group);
-cl::arg<int> duty_cycle_setpoint(
+cl::arg<int> duty_cycle_sp(
   100,
-  cl::name("duty-cycle-setpoint"),
+  cl::name("duty-cycle-sp"),
   ev3dev_group);
 
 // Test and benchmark estimate_trajectory.
@@ -82,7 +81,7 @@ int main(int argc, const char **argv) {
   chrono::milliseconds T(20);
 
   motor in(*input_port);
-  in.reset();
+  in.set_command(motor::command_reset);
 
   cout << "Turn the motor connected to port " << *input_port << "..." << endl;
 
@@ -93,24 +92,22 @@ int main(int argc, const char **argv) {
     m.run();
 
     for (auto t = clock::now(); ; t += T) {
-      m.set_position_setpoint(in.position()*scale);
+      m.set_position_sp(in.position()*scale);
       this_thread::sleep_until(t);
     }
   } else {
     // Compare against the stock controller
     motor m(*output_port);
-    m.reset();
-    m.set_run_mode(motor::run_mode_position);
-    m.set_regulation_mode(regulation_mode);
-    m.set_pulses_per_second_setpoint(pulses_per_second_setpoint);
-    m.set_duty_cycle_setpoint(duty_cycle_setpoint);
-    m.set_stop_mode(stop_mode);
-    m.set_ramp_up(ramp_up);
-    m.set_ramp_down(ramp_down);
+    m.set_command(motor::command_reset);
+    m.set_speed_regulation_enabled(speed_regulation ? motor::speed_regulation_on : motor::speed_regulation_off);
+    m.set_speed_sp(speed_sp);
+    m.set_duty_cycle_sp(duty_cycle_sp);
+    m.set_ramp_up_sp(ramp_up);
+    m.set_ramp_down_sp(ramp_down);
 
     for (auto t = clock::now(); ; t += T) {
-      m.set_position_setpoint(in.position()*scale);
-      m.run();
+      m.set_position_sp(in.position()*scale);
+      m.set_command(motor::command_run_to_abs_pos);
       this_thread::sleep_until(t);
     }
   }

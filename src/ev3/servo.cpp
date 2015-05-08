@@ -76,8 +76,8 @@ servo::~servo() {
   } else {
     servos_lock.unlock();
   }
-
-  m_.reset();
+  
+  m_.set_command(ev3dev::motor::command_reset);
 }
 
 void servo::run() {
@@ -85,21 +85,23 @@ void servo::run() {
     std::lock_guard<std::mutex> lock(this->lock_);
     pid_.reset();
   }
-  m_.set_run_mode(ev3dev::motor::run_mode_forever);
   tick(0);
-  m_.run();
+  m_.set_command(ev3dev::motor::command_run_direct);
 }
 
 void servo::stop(bool hold) {
   std::lock_guard<std::mutex> lock(this->lock_);
-  m_.set_stop_mode(hold ? ev3dev::motor::stop_mode_hold : ev3dev::motor::stop_mode_coast);
-  m_.stop();
+  if (hold) {
+    m_.set_stop_command(ev3dev::motor::stop_command_hold);
+  } else {
+    m_.set_stop_command(ev3dev::motor::stop_command_coast);
+  }
   pid_.reset();
 }
 
 void servo::reset(int position) {
   std::lock_guard<std::mutex> lock(this->lock_);
-  m_.reset();
+  m_.set_command(ev3dev::motor::command_reset);
   m_.set_position(position);
   pid_.reset();
   max_duty_cycle_ = 100;
@@ -113,20 +115,20 @@ void servo::tick(int dt) {
     pid_.set_setpoint(sp_fn_(x, t_, dt));
   }
   int y = pid_.tick(x, dt)/1024;
-  m_.set_duty_cycle_setpoint(clamp(y, -max_duty_cycle_, max_duty_cycle_));
+  m_.set_duty_cycle_sp(clamp(y, -max_duty_cycle_, max_duty_cycle_));
 }
 
-int servo::position_setpoint() const {
+int servo::position_sp() const {
   return pid_.setpoint();
 }
 
-void servo::set_position_setpoint(int sp) {
+void servo::set_position_sp(int sp) {
   std::lock_guard<std::mutex> lock(this->lock_);
   sp_fn_ = nullptr;
   pid_.set_setpoint(sp);
 }
 
-void servo::set_position_setpoint(std::function<int(int, int, int)> sp_fn) {
+void servo::set_position_sp(std::function<int(int, int, int)> sp_fn) {
   std::lock_guard<std::mutex> lock(this->lock_);
   sp_fn_ = sp_fn;
   t_ = 0;

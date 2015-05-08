@@ -1,4 +1,4 @@
-EV3DEVLANG?=../../../ev3dev-lang/
+EV3DEVLANG?=../../ev3dev-lang/
 CFLAGS=-O2 -march=armv5
 CCFLAGS=-std=c++11 -Wall -D_GLIBCXX_USE_NANOSLEEP -Iinclude -I$(EV3DEVLANG)/cpp
 DEPS= \
