@@ -10,8 +10,11 @@ Here is a brief overview of the features provided in the library:
 
 - Stereo vision using dual NXTcam cameras (camera models, calibration).
 - ev3dev support library (continuous motor controller, NXTcam support).
-- Math support library (linear algebra, quaternions, optimization).
+- Math support library (matrix/vector, quaternion, automatic differentiation).
 - Command line parsing library.
+
+The library is a bit of a catch-all for LEGO robot projects on ev3dev, the main unique feature
+is the support for stereo vision.
 
 Stereo vision
 =============
@@ -19,7 +22,8 @@ Stereo vision
 The main challenge with using NXTcam for stereo vision is calibration. Stereo 
 calibration is the name for the task of learning the intrinsic and extrinsic parameters for 
 a pair of stereo cameras. The standard techniques for stereo calibration involve placing a 
-pattern convenient for extracting features of a known relative position.
+pattern convenient for extracting features of a known relative position. With a set of observations
+from these points, the camera parameters necessary for accurate stereo vision can be estimated.
 
 Unfortunately, these techniques are difficult to use with NXTcam, because NXTcam only provides the 
 position of objects it detects within its field of view. Therefore, we need to find another
@@ -30,4 +34,3 @@ constraint. The simplest constraint to realize is that the object must lie on th
 sphere. This constraint can be realized by attaching a string to the object, and the other end of 
 the string to a known point relative to the cameras. By keeping the string taught, observations of
 the object lying on a sphere can be collected and used for calibration.
-
