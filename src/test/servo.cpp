@@ -13,8 +13,6 @@
 // limitations under the License.
 
 #include <thread>
-#include <set>
-#include <signal.h>
 
 #include <cl/cl.h>
 #include <ev3/servo.h>
@@ -98,7 +96,7 @@ int main(int argc, const char **argv) {
   } else {
     // Compare against the stock controller
     motor m(*output_port);
-    m.set_command(motor::command_reset);
+    m.reset();
     m.set_speed_regulation_enabled(speed_regulation ? motor::speed_regulation_on : motor::speed_regulation_off);
     m.set_speed_sp(speed_sp);
     m.set_duty_cycle_sp(duty_cycle_sp);
@@ -107,7 +105,7 @@ int main(int argc, const char **argv) {
 
     for (auto t = clock::now(); ; t += T) {
       m.set_position_sp(in.position()*scale);
-      m.set_command(motor::command_run_to_abs_pos);
+      m.run_to_abs_pos();
       this_thread::sleep_until(t);
     }
   }
