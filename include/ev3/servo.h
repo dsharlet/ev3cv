@@ -57,7 +57,10 @@ public:
   /** The state of the servo. */
   ///@{
   void run();
-  bool running() const { return m_.state().count("running"); }
+  bool is_in_transit() const { 
+    ev3dev::mode_set state = m_.state();
+    return state.count("running") && !state.count("holding");
+  }
   ///@}
 
   /** Stop the servo.
