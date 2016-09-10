@@ -50,7 +50,7 @@ void controller_main() {
   }
 }
 
-servo::servo(const ev3dev::port_type &port) : m_(port), pid_(5000, 5000, 200, 0, 5000) {
+servo::servo(ev3dev::address_type addr) : m_(addr), pid_(5000, 5000, 200, 0, 5000) {
   reset();
 
   {
@@ -92,9 +92,9 @@ void servo::run() {
 void servo::stop(bool hold) {
   std::lock_guard<std::mutex> lock(this->lock_);
   if (hold) {
-    m_.set_stop_command(ev3dev::motor::stop_command_hold);
+    m_.set_stop_action(ev3dev::motor::stop_action_hold);
   } else {
-    m_.set_stop_command(ev3dev::motor::stop_command_coast);
+    m_.set_stop_action(ev3dev::motor::stop_action_coast);
   }
   m_.stop();
   pid_.reset();

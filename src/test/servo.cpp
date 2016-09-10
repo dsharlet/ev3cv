@@ -47,9 +47,6 @@ cl::arg<vector3i> K(
   ev3cv_group);
 
 cl::group ev3dev_group("ev3dev::motor settings");
-cl::boolean speed_regulation(
-  cl::name("speed-regulation"),
-  ev3dev_group);
 cl::arg<std::string> stop_mode(
   "hold",
   cl::name("stop-mode"),
@@ -97,7 +94,6 @@ int main(int argc, const char **argv) {
     // Compare against the stock controller
     motor m(*output_port);
     m.reset();
-    m.set_speed_regulation_enabled(speed_regulation ? motor::speed_regulation_on : motor::speed_regulation_off);
     m.set_speed_sp(speed_sp);
     m.set_duty_cycle_sp(duty_cycle_sp);
     m.set_ramp_up_sp(ramp_up);

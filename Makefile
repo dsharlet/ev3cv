@@ -1,6 +1,6 @@
-EV3DEVLANG?=../../ev3dev-lang/
+EV3DEVLANG_CPP?=../../ev3dev-lang-cpp/
 CFLAGS=-O2 -march=armv5
-CCFLAGS=-std=c++11 -Wall -D_GLIBCXX_USE_NANOSLEEP -Iinclude -I$(EV3DEVLANG)/cpp
+CCFLAGS=-std=c++11 -Wall -D_GLIBCXX_USE_NANOSLEEP -Iinclude -I$(EV3DEVLANG_CPP)
 DEPS= \
 	include/cl/cl.h \
 	include/ev3/nxtcam.h \
@@ -15,7 +15,7 @@ DEPS= \
 	include/vision/camera.h \
 	include/ev3cv.h
 
-LIBEV3DEV=-L$(EV3DEVLANG)/cpp/lib -lev3dev
+LIBEV3DEV=-L$(EV3DEVLANG_CPP)/lib -lev3dev
 
 obj/%.o: src/%.cpp $(DEPS)
 	mkdir -p $(@D)
@@ -49,14 +49,14 @@ bin/test/servo: obj/test/servo.o lib/libcl.a lib/libev3cv.a
 
 clean:
 	rm -rf obj/* bin/* lib/*
-	
+
 test: \
 	bin/test/autodiff \
 	bin/test/calibration \
 	bin/test/camera \
 	bin/test/matrix \
 	bin/test/servo
-	
+
 all: \
 	bin/calibrate \
 	lib/libcl.a \

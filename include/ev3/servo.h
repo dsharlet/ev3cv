@@ -44,13 +44,13 @@ protected:
   friend void controller_main();
 
 public:
-  servo(const ev3dev::port_type &port);
+  servo(ev3dev::address_type address);
   ~servo();
 
   /** Basic servo attributes. */
   ///@{
   bool connected() const { return m_.connected(); }
-  std::string port_name() const { return m_.port_name(); }
+  std::string address() const { return m_.address(); }
   std::string driver_name() const { return m_.driver_name(); }
   ///@}
 
