@@ -93,6 +93,9 @@ public:
   pid_controller<int, 1000> &controller() { return pid_; }
   const pid_controller<int, 1000> &controller() const { return pid_; }
   ///@}
+
+  /** Get the number of tacho counts per rotation of the servo. */
+  int count_per_rot() const { return m_.count_per_rot(); }
 };
 
 }  // namespace ev3cv
